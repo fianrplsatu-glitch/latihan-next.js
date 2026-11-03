@@ -5,6 +5,7 @@ import { rupiah, type Event } from '@/data/events';
 export default function FormPesan({ event }: { event: Event }) {
   const sisa = event.kuota - event.terisi;
   const [nama, setNama] = useState('');
+  const [email, setEmail] = useState('');
   const [jumlah, setJumlah] = useState(1);
   const [pesan, setPesan] = useState('');
   const [berhasil, setBerhasil] = useState(false);
@@ -13,6 +14,7 @@ export default function FormPesan({ event }: { event: Event }) {
     e.preventDefault();
     setBerhasil(false);
     if (nama.trim().length < 3) return setPesan('Nama minimal 3 huruf.');
+    if (!email.includes('@')) return setPesan('Email harus mengandung @.');
     if (jumlah < 1) return setPesan('Jumlah tiket minimal 1.');
     if (jumlah > sisa) return setPesan(`Sisa tiket hanya ${sisa}.`);
     setPesan('');
@@ -30,6 +32,12 @@ export default function FormPesan({ event }: { event: Event }) {
         value={nama}
         onChange={(e) => setNama(e.target.value)}
         placeholder="Nama pemesan"
+        className="block w-full rounded border px-3 py-2"
+      />
+      <input
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email pemesan"
         className="block w-full rounded border px-3 py-2"
       />
       <input
