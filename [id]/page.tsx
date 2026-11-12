@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { events, rupiah } from '@/data/events';
-import FormPesan from '@/components/Formpesan';
+import FormPesan from '@/components/FormPesan';
 import TombolFavorit from '@/components/TombolFavorit';
 
 export default async function Detail({ params }: PageProps<'/event/[id]'>) {

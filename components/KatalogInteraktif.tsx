@@ -1,20 +1,31 @@
 'use client';
+
 import { useState } from 'react';
 import type { Event } from '@/data/events';
-import KartuEvent from './KartuEvent';
+import KartuEvent from '@/components/KartuEvent';
 
 export default function KatalogInteraktif({ events }: { events: Event[] }) {
   const [cari, setCari] = useState('');
   const [kategori, setKategori] = useState('Semua');
+  const [urut, setUrut] = useState('tanggal');
   const [hanyaTersedia, setHanyaTersedia] = useState(false);
 
   const daftarKategori = ['Semua', ...new Set(events.map((e) => e.kategori))];
+
   const hasil = events.filter(
     (e) =>
       e.judul.toLowerCase().includes(cari.toLowerCase()) &&
       (kategori === 'Semua' || e.kategori === kategori) &&
-      (!hanyaTersedia || e.kuota - e.terisi > 0),
+      (!hanyaTersedia || e.terisi < e.kuota),
   );
+
+  const terurut = [...hasil].sort((a, b) => {
+    if (urut === 'murah') return a.harga - b.harga;
+    if (urut === 'mahal') return b.harga - a.harga;
+    if (urut === 'nama') return a.judul.localeCompare(b.judul);
+
+    return a.tanggal.localeCompare(b.tanggal);
+  });
 
   return (
     <div>
@@ -25,31 +36,47 @@ export default function KatalogInteraktif({ events }: { events: Event[] }) {
           placeholder="Cari event..."
           className="rounded border bg-white px-3 py-2"
         />
+
         <select
           value={kategori}
           onChange={(e) => setKategori(e.target.value)}
           className="rounded border bg-white px-3 py-2"
         >
           {daftarKategori.map((k) => (
-            <option key={k} value={k}>
-              {k}
-            </option>
+            <option key={k}>{k}</option>
           ))}
         </select>
-        <label className="flex items-center gap-2 text-slate-700">
+
+        <select
+          value={urut}
+          onChange={(e) => setUrut(e.target.value)}
+          className="rounded border bg-white px-3 py-2"
+        >
+          <option value="tanggal">Tanggal terdekat</option>
+          <option value="murah">Harga termurah</option>
+          <option value="mahal">Harga termahal</option>
+          <option value="nama">Nama A-Z</option>
+        </select>
+
+        <label className="flex items-center gap-2">
           <input
             type="checkbox"
             checked={hanyaTersedia}
             onChange={(e) => setHanyaTersedia(e.target.checked)}
           />
-          Hanya yang masih ada tiket
+          Hanya event tersedia
         </label>
       </div>
-      {hasil.length === 0 ? (
+
+      <p className="mb-3 text-sm text-slate-500">
+        {terurut.length} event ditemukan
+      </p>
+
+      {terurut.length === 0 ? (
         <p className="text-slate-500">Tidak ada event yang cocok.</p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {hasil.map((e) => (
+          {terurut.map((e) => (
             <KartuEvent key={e.id} event={e} />
           ))}
         </div>
