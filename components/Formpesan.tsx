@@ -3,12 +3,18 @@ import { useActionState, useState } from 'react';
 import { pesanTiket, type HasilPesan } from '@/app/actions';
 import { rupiah, type Event } from '@/data/events';
 
-export default function FormPesan({ event }: { event: Event }) {
+export default function FormPesan({
+  event,
+  namaAwal = '',
+}: {
+  event: Event;
+  namaAwal?: string;
+}) {
   const awal: HasilPesan = {
     berhasil: false,
     pesan: '',
     galat: {},
-    isian: { nama: '', email: '' },
+    isian: { nama: namaAwal, email: '' },
   };
   const [hasil, kirim, sedangKirim] = useActionState(pesanTiket, awal);
   const [jumlah, setJumlah] = useState(1);
@@ -26,7 +32,7 @@ export default function FormPesan({ event }: { event: Event }) {
       <div>
         <input
           name="nama"
-          defaultValue={hasil.isian.nama}
+          defaultValue={hasil.isian.nama || namaAwal}
           placeholder="Nama pemesan"
           className="block w-full rounded border px-3 py-2"
         />

@@ -21,7 +21,13 @@ export function ambilEvents(id?: number) {
   })();
 }
 
+export function ambilEvent(id: number) {
+  return ambilEvents(id);
+}
+
 export async function ambilTerkait(event: Event) {
   await jeda(2000);
-  return events.filter((e) => e.kategori === event.kategori && e.id !== event.id);
+  return events.filter(
+    (e) => e.kategori === event.kategori && e.id !== event.id,
+  );
 }
